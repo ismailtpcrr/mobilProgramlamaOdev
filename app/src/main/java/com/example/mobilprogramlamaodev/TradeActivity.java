@@ -3,6 +3,7 @@ package com.example.mobilprogramlamaodev;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -27,6 +28,13 @@ public class TradeActivity extends AppCompatActivity {
     private DataManager dataManager;
     private double currentAssetPrice;
     private String assetSymbol;
+    private final Handler priceHandler = new Handler();
+    private final Runnable priceRunnable = new Runnable() {
+        @Override public void run() {
+            startPriceUpdates();
+            priceHandler.postDelayed(this, 5000); // 5 saniyede bir güncelle
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +66,6 @@ public class TradeActivity extends AppCompatActivity {
         txtAssetName.setText(assetName + " (" + assetSymbol + ")");
         
         setupWebView(assetSymbol);
-        startPriceUpdates();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setSelectedItemId(R.id.nav_trade);
@@ -82,6 +89,18 @@ public class TradeActivity extends AppCompatActivity {
 
         btnBuy.setOnClickListener(v -> executeTrade("BUY"));
         btnSell.setOnClickListener(v -> executeTrade("SELL"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        priceHandler.post(priceRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        priceHandler.removeCallbacks(priceRunnable);
     }
 
     private void executeTrade(String type) {

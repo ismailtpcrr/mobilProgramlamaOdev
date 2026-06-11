@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PriceService {
-    private static final String TICKER_URL = "https://api.binance.com/api/v3/ticker/24hr";
+    // tradingDay: gün başından (00:00 UTC) itibaren değişim oranı verir (24h rolling değil)
+    private static final String TICKER_URL = "https://api.binance.com/api/v3/ticker/tradingDay";
     private final OkHttpClient client = new OkHttpClient();
     private static PriceService instance;
     

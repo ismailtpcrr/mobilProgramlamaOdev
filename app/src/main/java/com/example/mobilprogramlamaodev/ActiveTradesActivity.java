@@ -2,6 +2,7 @@ package com.example.mobilprogramlamaodev;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,14 @@ public class ActiveTradesActivity extends AppCompatActivity {
     private RecyclerView recyclerActiveTrades;
     private DataManager dataManager;
     private PortfolioAdapter adapter;
+    private final Handler plHandler = new Handler();
+    private final Runnable plRunnable = new Runnable() {
+        @Override public void run() {
+            // Adapter varsa fiyatları yeniden çek (scroll pozisyonunu bozmadan)
+            if (adapter != null) adapter.notifyDataSetChanged();
+            plHandler.postDelayed(this, 10000); // 10 saniyede bir P&L güncelle
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +59,13 @@ public class ActiveTradesActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateUI();
+        plHandler.post(plRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        plHandler.removeCallbacks(plRunnable);
     }
 
     public void updateUI() {

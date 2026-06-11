@@ -2,6 +2,7 @@ package com.example.mobilprogramlamaodev;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,13 @@ public class MainActivity extends AppCompatActivity {
     private SearchView searchView;
 
     private DataManager dataManager;
+    private final Handler priceHandler = new Handler();
+    private final Runnable priceRunnable = new Runnable() {
+        @Override public void run() {
+            updatePrices();
+            priceHandler.postDelayed(this, 15000); // 15 saniyede bir güncelle
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +76,18 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        updatePrices();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        priceHandler.post(priceRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        priceHandler.removeCallbacks(priceRunnable);
     }
 
     private void updatePrices() {
