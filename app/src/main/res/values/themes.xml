@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MobilProgramlamaOdev" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/primary_dark</item>
+        <item name="colorPrimary">@color/accent_gold</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
+
+    <style name="Theme.MobilProgramlamaOdev" parent="Base.Theme.MobilProgramlamaOdev" />
+</resources>
